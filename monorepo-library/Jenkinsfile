@@ -1,6 +1,6 @@
 #!/usr/bin/env groovy
 
-def projectDir = '/var/jenkins_home/monorepo-experiments-master/monorepo-library'
+def projectDir = '/var/lib/jenkins/master/monorepo-library'
 
 pipeline {
     agent any
