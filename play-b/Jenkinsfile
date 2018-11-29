@@ -1,0 +1,19 @@
+#!/usr/bin/env groovy
+
+def projectDir = '/var/jenkins_home/monorepo-experiments-master/play-b'
+
+pipeline {
+    agent any
+    options {
+        skipDefaultCheckout true
+    }
+    stages {
+        stage('init') {
+            steps {
+                echo "começo de build do play b"
+
+                }
+            }
+        }
+    }
+}
