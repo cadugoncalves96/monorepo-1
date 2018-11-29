@@ -1,6 +1,6 @@
 #!/usr/bin/env groovy
 
-def projectDir = '/var/jenkins_home/monorepo-experiments-master/play-b'
+def projectDir = '/var/jenkins_home/master/play-b'
 
 pipeline {
     agent any
