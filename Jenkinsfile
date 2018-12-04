@@ -4,7 +4,7 @@ pipeline {
     agent any
     
     stages {
-        stage('init') {
+        stage('inicio') {
             steps {
                 script {
                     def scmVars = checkout scm
