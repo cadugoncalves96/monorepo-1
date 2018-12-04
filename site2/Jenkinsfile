@@ -21,35 +21,43 @@ pipeline {
         stages {
         stage('Docker Build') {
             steps {
+            dir(projectDir) {
                 sh """
                     sudo docker build -t ${SERVICE_NAME}:${BUILD_NUMBER} .
                 """
             }
             }
+        }
         stage('Tag Image') {
             steps {
+            dir(projectDir) {
                 sh """
                     sudo docker tag ${SERVICE_NAME}:${BUILD_NUMBER} ${DOCKER_REPO}/${SERVICE_NAME}:${BUILD_NUMBER}
                     sudo docker tag ${SERVICE_NAME}:${BUILD_NUMBER} ${DOCKER_REPO}/${SERVICE_NAME}:latest
                 """
             }
         }
+        }
         stage('Push Image') {
             steps {
+                dir(projectDir) {
                 sh """
                     sudo docker push ${DOCKER_REPO}/${SERVICE_NAME}:${BUILD_NUMBER}
                     sudo docker push ${DOCKER_REPO}/${SERVICE_NAME}:latest
                 """
             }
         }
+        }
          stage('Deploy Container ') {
             steps {
+                dir(projectDir) {
                 sh """
                     sudo ssh -o StrictHostKeyChecking=no -i ${KEYPAIR} ${USER}@${INSTANCE} sudo docker container stop ${SERVICE_NAME}
                     sudo ssh -o StrictHostKeyChecking=no -i ${KEYPAIR} ${USER}@${INSTANCE} sudo docker container rm ${SERVICE_NAME}
                     sudo ssh -o StrictHostKeyChecking=no -i ${KEYPAIR} ${USER}@${INSTANCE} sudo docker run -d --name ${SERVICE_NAME} -p ${PORT_NGINX}:${PORT_NGINX} ${DOCKER_REPO}/${SERVICE_NAME}:${BUILD_NUMBER}
                 """
             }
+        }
         }
         }
 }
