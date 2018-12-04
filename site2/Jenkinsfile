@@ -1,0 +1,56 @@
+#!/usr/bin/env groovy
+
+def projectDir = '/var/lib/jenkins/monorepo/site2'
+
+pipeline {
+    agent any
+
+    options {
+        skipDefaultCheckout true
+    }
+
+    environment {
+        SERVICE_NAME = 'nginx-site2'
+        DOCKER_REPO = 'hcavarsan'
+        PORT_NGINX = '80'
+        INSTANCE = '52.206.108.67'
+        USER = 'ec2-user'
+        KEYPAIR = '/tmp/site1.pem'
+    }
+
+        stages {
+        stage('Docker Build') {
+            steps {
+                sh """
+                    sudo docker build -t ${SERVICE_NAME}:${BUILD_NUMBER} .
+                """
+            }
+            }
+        stage('Tag Image') {
+            steps {
+                sh """
+                    sudo docker tag ${SERVICE_NAME}:${BUILD_NUMBER} ${DOCKER_REPO}/${SERVICE_NAME}:${BUILD_NUMBER}
+                    sudo docker tag ${SERVICE_NAME}:${BUILD_NUMBER} ${DOCKER_REPO}/${SERVICE_NAME}:latest
+                """
+            }
+        }
+        stage('Push Image') {
+            steps {
+                sh """
+                    sudo docker push ${DOCKER_REPO}/${SERVICE_NAME}:${BUILD_NUMBER}
+                    sudo docker push ${DOCKER_REPO}/${SERVICE_NAME}:latest
+                """
+            }
+        }
+         stage('Deploy Container ') {
+            steps {
+                sh """
+                    sudo ssh -o StrictHostKeyChecking=no -i ${KEYPAIR} ${USER}@${INSTANCE} sudo docker container stop ${SERVICE_NAME}
+                    sudo ssh -o StrictHostKeyChecking=no -i ${KEYPAIR} ${USER}@${INSTANCE} sudo docker container rm ${SERVICE_NAME}
+                    sudo ssh -o StrictHostKeyChecking=no -i ${KEYPAIR} ${USER}@${INSTANCE} sudo docker run -d --name ${SERVICE_NAME} -p ${PORT_NGINX}:${PORT_NGINX} ${DOCKER_REPO}/${SERVICE_NAME}:${BUILD_NUMBER}
+                """
+            }
+        }
+        }
+}
+

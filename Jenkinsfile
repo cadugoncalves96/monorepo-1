@@ -8,41 +8,30 @@ pipeline {
             steps {
                 script {
                     def scmVars = checkout scm
-                    env.MY_GIT_PREVIOUS_SUCCESSFUL_COMMIT = scmVars.GIT_PREVIOUS_SUCCESSFUL_COMMIT
+                    env.ULTIMO_COMMIT = scmVars.GIT_PREVIOUS_SUCCESSFUL_COMMIT
                 }
             }
         }
-        stage('monorepo-library') {
+        stage('site1') {
             when {
                 expression {
-                    matches = sh(returnStatus:true, script: "git diff --name-only $MY_GIT_PREVIOUS_SUCCESSFUL_COMMIT|egrep -q '^monorepo-library'")
+                    matches = sh(returnStatus:true, script: "git diff --name-only $ULTIMO_COMMIT|egrep -q '^site1'")
                     return !matches
                 }
             }
             steps {
-                build 'monorepo-library'
+                build 'site1'
             }
         }
-        stage('play-a') {
+        stage('site2') {
             when {
                 expression {
-                    matches = sh(returnStatus: true, script: "git diff --name-only $MY_GIT_PREVIOUS_SUCCESSFUL_COMMIT|egrep -q '^play-a'")
+                    matches = sh(returnStatus: true, script: "git diff --name-only $ULTIMO_COMMIT|egrep -q '^site2'")
                     return !matches
                 }
             }
             steps {
-                build 'play-a'
-            }
-        }
-        stage('play-b') {
-            when {
-                expression {
-                    matches = sh(returnStatus: true, script: "git diff --name-only $MY_GIT_PREVIOUS_SUCCESSFUL_COMMIT|egrep -q '^play-b'")
-                    return !matches
-                }
-            }
-            steps {
-                build 'play-b'
+                build 'site2'
             }
         }
     }
