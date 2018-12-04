@@ -15,7 +15,7 @@ pipeline {
         PORT_NGINX = '80'
         INSTANCE = '52.206.108.67'
         USER = 'ec2-user'
-        KEYPAIR = '/tmp/site1.pem'
+        KEYPAIR = '/tmp/monorepo.pem'
     }
 
         stages {
