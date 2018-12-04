@@ -13,7 +13,7 @@ pipeline {
         SERVICE_NAME = 'nginx-site2'
         DOCKER_REPO = 'hcavarsan'
         PORT_NGINX = '80'
-        INSTANCE = '52.206.108.67'
+        INSTANCE = '52.54.10.160'
         USER = 'ec2-user'
         KEYPAIR = '/tmp/monorepo.pem'
     }
